@@ -1,11 +1,17 @@
-// controllers/applicationController.js
-
 const Application = require('../models/Application');
 
 const createApplication = async (req, res) => {
     try {
-        const { name, address, phone, brand, model, serialNumber, dateOfAcquisition, powerOutput} = req.body;
-        const newApplication = new Application({ name, address, phone, brand, model, serialNumber, dateOfAcquisition, powerOutput});
+        const { name, address, phone, brand, model, serialNumber, dateOfAcquisition, powerOutput } = req.body;
+
+        // Generate custom ID
+        const count = await Application.countDocuments() + 1;
+        const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+        const customId = `PMDQ-CSAW-${date}-${String(count).padStart(6, '0')}`;
+
+        const newApplication = new Application({ 
+            customId, name, address, phone, brand, model, serialNumber, dateOfAcquisition, powerOutput 
+        });
         const savedApplication = await newApplication.save();
         res.status(201).json(savedApplication);
     } catch (err) {
