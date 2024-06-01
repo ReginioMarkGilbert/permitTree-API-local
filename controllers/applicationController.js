@@ -1,4 +1,5 @@
 const Application = require('../models/Application');
+const Counter = require('../models/Counter');
 
 const createApplication = async (req, res) => {
     try {
@@ -6,9 +7,13 @@ const createApplication = async (req, res) => {
         const { name, address, phone, brand, model, serialNumber, dateOfAcquisition, powerOutput, fileNames, store } = req.body;
 
         // Generate custom ID
-        const count = await Application.countDocuments() + 1;
         const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
-        const customId = `PMDQ-CSAW-${date}-${String(count).padStart(6, '0')}`;
+        const counter = await Counter.findOneAndUpdate(
+            { name: 'applicationId' },
+            { $inc: { seq: 1 } },
+            { new: true, upsert: true }
+        );
+        const customId = `PMDQ-CSAW-${date}-${String(counter.seq).padStart(6, '0')}`;
 
         const newApplication = new Application({
             customId, name, address, phone, brand, model, serialNumber, dateOfAcquisition, powerOutput, fileNames, store
