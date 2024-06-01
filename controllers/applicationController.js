@@ -1,5 +1,5 @@
 const Application = require('../models/Application');
-const Counter = require('../models/Counter');
+const Counter = require('../models/counter');
 
 const createApplication = async (req, res) => {
     try {
@@ -62,10 +62,24 @@ const deleteApplication = async (req, res) => {
     }
 };
 
+const resetCounter = async (req, res) => {
+    try {
+        const counter = await Counter.findOneAndUpdate(
+            { name: 'applicationId' },
+            { seq: 0 },
+            { new: true }
+        );
+        res.status(200).json({ message: 'Counter reset successfully', counter });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
 module.exports = {
     createApplication,
     getApplications,
     updateApplication,
-    deleteApplication
+    deleteApplication,
+    resetCounter
 };
 
