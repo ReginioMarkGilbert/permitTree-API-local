@@ -3,7 +3,7 @@ const Counter = require('../models/counter');
 
 const createApplication = async (req, res) => {
     try {
-        console.log('Request Body:', req.body); // Log the request body
+        // console.log('Request Body:', req.body); // Log the request body
         const { name, address, phone, brand, model, serialNumber, dateOfAcquisition, powerOutput, fileNames, store } = req.body;
 
         // Generate custom ID
@@ -14,9 +14,10 @@ const createApplication = async (req, res) => {
             { new: true, upsert: true }
         );
         const customId = `PMDQ-CSAW-${date}-${String(counter.seq).padStart(6, '0')}`;
+        const dateOfSubmission = new Date();
 
         const newApplication = new Application({
-            customId, name, address, phone, brand, model, serialNumber, dateOfAcquisition, powerOutput, fileNames, store
+            customId, name, address, phone, brand, model, serialNumber, dateOfAcquisition, powerOutput, fileNames, store, dateOfSubmission
         });
         const savedApplication = await newApplication.save();
         res.status(201).json(savedApplication);
@@ -28,7 +29,16 @@ const createApplication = async (req, res) => {
 
 const getApplications = async (req, res) => {
     try {
-        const applications = await Application.find();
+        const { sort } = req.query;
+        let sortOption = {};
+
+        if (sort === 'date-asc') {
+            sortOption = { dateOfSubmission: 1 };
+        } else if (sort === 'date-desc') {
+            sortOption = { dateOfSubmission: -1 };
+        }
+
+        const applications = await Application.find().sort(sortOption);
         res.status(200).json(applications);
     } catch (err) {
         res.status(400).json({ error: err.message });

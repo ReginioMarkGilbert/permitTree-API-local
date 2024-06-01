@@ -14,7 +14,7 @@ const applicationSchema = new mongoose.Schema({
     serialNumber: { type: mongoose.Schema.Types.Mixed, required: true },
     dateOfAcquisition: { type: Date, required: true },
     powerOutput: { type: mongoose.Schema.Types.Mixed, required: true },
-
+    dateOfSubmission: { type: Date, default: Date.now },
     status: { type: String, default: 'For Review' }
 });
 
