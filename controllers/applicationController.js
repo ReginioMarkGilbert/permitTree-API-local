@@ -14,15 +14,15 @@ const createApplication = async (req, res) => {
             { new: true, upsert: true }
         );
         const customId = `PMDQ-CSAW-${date}-${String(counter.seq).padStart(6, '0')}`;
-        const dateOfSubmission = new Date();
 
+        const dateOfSubmission = new Date();
         const newApplication = new Application({
             customId, name, address, phone, brand, model, serialNumber, dateOfAcquisition, powerOutput, fileNames, store, dateOfSubmission
         });
         const savedApplication = await newApplication.save();
         res.status(201).json(savedApplication);
     } catch (err) {
-        console.error('Error:', err); // Log the error
+        console.error('Error:', err);
         res.status(400).json({ error: err.message });
     }
 };
