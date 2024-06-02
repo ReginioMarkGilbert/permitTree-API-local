@@ -13,7 +13,8 @@ const createApplication = async (req, res) => {
             { $inc: { seq: 1 } },
             { new: true, upsert: true }
         );
-        const customId = `PMDQ-CSAW-${date}-${String(counter.seq).padStart(6, '0')}`;
+        const year = new Date().getFullYear();
+        const customId = `PMDQ-CSAW-${year}-${String(counter.seq).padStart(6, '0')}`;
 
         const dateOfSubmission = new Date();
         const newApplication = new Application({
